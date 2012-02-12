@@ -8,6 +8,6 @@ $(function() {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
-  var map = new google.maps.Map(document.getElementById("map"), myOptions);
+  var map = new google.maps.Map(document.getElementById("map"), myOptions);  
 
 });
