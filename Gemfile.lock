@@ -2,6 +2,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     mime-types (1.17.2)
+    mustache (0.99.4)
     rack (1.4.1)
     rack-protection (1.2.0)
       rack
@@ -19,6 +20,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  mustache
   rest-client
   shotgun
   sinatra

@@ -10,21 +10,28 @@ lr.Events = Backbone.Collection.extend({
   }
 });
 
-lr.EventView = Backbone.View.extend({
+lr.EventListView = Backbone.View.extend({
   tagName: 'div',
-  className: 'event-dot',
+  className: 'list',
+  eventTemplate: _.template("<div class='event'>Title: <%= title %></event>"),
   initialize: function() {
+    var that = this;
     _.bindAll(this, "render");
     this.collection = new lr.Events();
     this.collection.fetch({
       success:  function(resp) {
-        console.log(resp.toJSON());  
+        that.render();
       }
     });    
-    this.render();
   },
   render: function() {
+    var that = this;
+    _.each(this.collection.toJSON(), function(item) {
+      $('#event-container').append(that.eventTemplate({
+        title:    item.short_title
+      }));
+    });
   } 
 });
 
-lr.ev = new lr.EventView();
+lr.ev = new lr.EventListView();
