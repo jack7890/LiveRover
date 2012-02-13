@@ -1,6 +1,10 @@
 $(function() {
   var lr = lr || {};
 
+  _.templateSettings = {
+    interpolate : /\{\{(.+?)\}\}/g
+  };
+
   lr.Event = Backbone.Model.extend({});
 
   lr.Events = Backbone.Collection.extend({
@@ -13,7 +17,6 @@ $(function() {
 
   lr.MapView = Backbone.View.extend({
     el: $('#map'),
-    foo: "bar",
     initialize: function() {
       var that = this;
       _.bindAll(this, "render", "addAllEvents", "addOneEvent");
@@ -49,20 +52,33 @@ $(function() {
   
   lr.EventView = Backbone.View.extend({
     initialize: function() {
-      _.bindAll(this, "render");
+      _.bindAll(this, "render", "bindInfoWindow","bindInfoWindow");
       this.latLon = new google.maps.LatLng(this.model.attributes.venue.location.lat,this.model.attributes.venue.location.lon);
       this.marker = new google.maps.Marker({
          position:  this.latLon,
          map:       this.options.parentView.map,
          title:     this.model.attributes.short_title
-      })
+      });
+      this.bindInfoWindow();
     },
     
-    showInfoWindow: function() {
-      
-    },
+    infoWindowContent: function() {
+      var that = this, 
+          content = _.template($('#info-window').html(),{
+            title:      that.model.attributes.short_title,
+            venue:      that.model.attributes.venue.name,
+          });
+      return content;
+    },      
     
-    render: function() {
+    bindInfoWindow: function() {
+      var that = this,
+          infowindow = new google.maps.InfoWindow({
+            content: this.infoWindowContent()
+          });
+      google.maps.event.addListener(this.marker, 'click', function() {
+        infowindow.open(that.options.parentView.map,that.marker);
+      });
     }
   });
 

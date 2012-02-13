@@ -26,11 +26,12 @@
   position: absolute;
   top: 45px;
 }
+#map img { max-width: none; }
 #header #logo {
   color: #2F1900;
   float: left;
   font-size: 21px;
-  padding: 12px 0 0 18px;
+  padding: 12px 0 0 17px;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
   font-family: 'Lobster', cursive, arial;
 }
@@ -38,7 +39,7 @@
   float: right;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.28);
   font-size: 12px;
-  padding: 13px 14px 0 0;
+  padding: 14px 14px 0 0;
   color: #432400;
 }
 #header #credit b {
