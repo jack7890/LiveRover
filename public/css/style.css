@@ -1,12 +1,47 @@
-body {
+#wrapper {
   position: relative;
-}
-#map {
   height: 100%;
   width: 100%;
+  font-family: 'Lato', sans-serif;
 }
-#event-container {
+#header {
+  background-color: #ef8100;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(239, 129, 0)), to(rgb(204, 110, 0)));
+  background-image: -webkit-linear-gradient(top, rgb(239, 129, 0), rgb(204, 110, 0));
+  background-image: -moz-linear-gradient(top, rgb(239, 129, 0), rgb(204, 110, 0));
+  background-image: -o-linear-gradient(top, rgb(239, 129, 0), rgb(204, 110, 0));
+  background-image: -ms-linear-gradient(top, rgb(239, 129, 0), rgb(204, 110, 0));
+  background-image: linear-gradient(top, rgb(239, 129, 0), rgb(204, 110, 0));
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ef8100', EndColorStr='#cc6e00');
+
   position: absolute;
-  top: 100px;
-  left: 100px;
+  top: 0;
+  left: 0;
+  height: 42px;
+  width: 100%;
+  border-bottom: 2px solid #9a5300;
+  box-shadow: 0 1px 0px rgba(255, 255, 255, 0.3) inset, 0 0px 1px rgba(255, 255, 255, 0.3) inset;
 }
+#map {
+  position: absolute;
+  top: 45px;
+}
+#header #logo {
+  color: #2F1900;
+  float: left;
+  font-size: 21px;
+  padding: 12px 0 0 18px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+  font-family: 'Lobster', cursive, arial;
+}
+#header #credit {
+  float: right;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.28);
+  font-size: 12px;
+  padding: 13px 14px 0 0;
+  color: #432400;
+}
+#header #credit b {
+  font-weight: 700;
+  text-transform: uppercase;
+}  
