@@ -15,7 +15,12 @@ $(function() {
 
   lr.Events = Backbone.Collection.extend({
     model: lr.Event,
-    url: '/events',
+    initialize: function(models, options) {
+      this.date = options.date;
+    },
+    url: function() {
+      return '/events' + '?date=' + this.date.toString('yyyy-MM-dd');
+    },
     parse: function(resp) {
       // Temporarily removing venues "located" at the center of NYC, since those are bogus
       return _.reject(resp.events, function(ev) { 
@@ -25,30 +30,52 @@ $(function() {
   });
 
   lr.MapView = Backbone.View.extend({
-    el: $('#map'),
+    el: $('#wrapper'),
     initialize: function() {
+      this.date = this.options.date;
+      _.bindAll(this, "render", "addAllEvents", "addOneEvent", "showNextDay", "collectData");
+      this.collectData();
+    },
+    events: {
+      "click #next": "showNextDay",
+      "click #prev.active": "showPrevDay"      
+    },
+    collectData: function() {
       var that = this;
-      _.bindAll(this, "render", "addAllEvents", "addOneEvent");
-      this.collection = new lr.Events();
+      this.collection = new lr.Events([], { date : this.date });
       this.collection.fetch({
         success:  function(resp) {
           that.render();
           that.addAllEvents();
         }
-      });   
+      });      
     },
-    
+    showNextDay: function() {
+      this.date = this.date.add(1).days();
+      this.setArrowClass();
+      this.collectData();
+    },
+    showPrevDay: function() {
+      this.date = this.date.add(-1).days();
+      this.collectData();
+      this.setArrowClass();
+    },    
+    setArrowClass: function() {
+      if(this.date.equals(Date.today())) {
+        $('#prev').removeClass('active').addClass('disabled');      
+      } else {
+        $('#prev').removeClass('disabled').addClass('active');
+      }  
+    },    
     addAllEvents: function() {
       this.collection.each(this.addOneEvent);
     },
-    
     addOneEvent: function(e) {
       var ev = new lr.EventView({ 
         model:  e,
         parentView: this
       });
-    },
-    
+    },    
     render: function() {
       this.mapOptions = {
         center: new google.maps.LatLng(40.726966, -73.99),
@@ -56,13 +83,19 @@ $(function() {
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       this.map = new google.maps.Map($('#map')[0], this.mapOptions);
+      $('#date-value').html(this.date.toString("dddd, MMMM d"));
+      $('#date').fadeIn('fast');
     } 
   });
   
   
   lr.EventView = Backbone.View.extend({
     initialize: function() {
-      _.bindAll(this, "render", "bindInfoWindow","bindInfoWindow");
+      var that = this;
+      _.bindAll(this, "render", "bindInfoWindow","infoWindowContent");
+      this.bind('change', function() {
+        that.remove();
+      });
       this.latLon = new google.maps.LatLng(this.model.attributes.venue.location.lat,this.model.attributes.venue.location.lon);
       this.marker = new google.maps.Marker({
          position:  this.latLon,
@@ -71,7 +104,6 @@ $(function() {
       });
       this.bindInfoWindow();
     },
-    
     infoWindowContent: function() {
       var that = this, 
           content = _.template($('#info-window').html(),{
@@ -82,7 +114,6 @@ $(function() {
           });
       return content;
     },      
-    
     bindInfoWindow: function() {
       var that = this,
           infowindow = new google.maps.InfoWindow({
@@ -95,5 +126,7 @@ $(function() {
   });
 
 
-  lr.ev = new lr.MapView();
+  lr.ev = new lr.MapView(
+    { date: Date.parse('today') }
+  );
 });
