@@ -1,0 +1,1 @@
+LiveRover is an a simple web app built to show off the SeatGeek "v2" API.  It uses Sinatra for its (almost non-existent) backend, Backbone.js to render the frontend, and the Google Maps API.
