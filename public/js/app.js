@@ -1,9 +1,15 @@
 $(function() {
-  var lr = lr || {};
+  var lr = lr || {},
+      // Google Maps center of NYC.  Going to filter this out.
+      badLoc = {
+        lat: 40.7144,
+        lon: -74.006
+      }; 
 
   _.templateSettings = {
     interpolate : /\{\{(.+?)\}\}/g
   };
+  
 
   lr.Event = Backbone.Model.extend({});
 
@@ -11,7 +17,10 @@ $(function() {
     model: lr.Event,
     url: '/events',
     parse: function(resp) {
-      return resp.events;
+      // Temporarily removing venues "located" at the center of NYC, since those are bogus
+      return _.reject(resp.events, function(ev) { 
+        return ( ev.venue.location.lat == badLoc.lat && ev.venue.location.lon == badLoc.lon) 
+      });
     }
   });
 
@@ -50,6 +59,7 @@ $(function() {
     } 
   });
   
+  
   lr.EventView = Backbone.View.extend({
     initialize: function() {
       _.bindAll(this, "render", "bindInfoWindow","bindInfoWindow");
@@ -66,7 +76,9 @@ $(function() {
       var that = this, 
           content = _.template($('#info-window').html(),{
             title:      that.model.attributes.short_title,
+            link:       that.model.attributes.url,
             venue:      that.model.attributes.venue.name,
+            time:       Date.parse(that.model.attributes.datetime_local).toString("ddd, MMM d @ h:mmt")
           });
       return content;
     },      
@@ -81,6 +93,7 @@ $(function() {
       });
     }
   });
+
 
   lr.ev = new lr.MapView();
 });
