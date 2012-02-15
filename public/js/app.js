@@ -17,9 +17,10 @@ $(function() {
     model: lr.Event,
     initialize: function(models, options) {
       this.date = options.date;
+      this.latlon = options.latlon;
     },
     url: function() {
-      return '/events' + '?date=' + this.date.toString('yyyy-MM-dd');
+      return '/events' + '?date=' + this.date.toString('yyyy-MM-dd') + '&lat=' + this.latlon.lat + '&lon=' + this.latlon.lon;
     },
     parse: function(resp) {
       // Temporarily removing venues "located" at the center of NYC, since those are bogus
@@ -33,7 +34,8 @@ $(function() {
     el: $('#wrapper'),
     initialize: function() {
       this.date = this.options.date;
-      _.bindAll(this, "render", "addAllEvents", "addOneEvent", "showNextDay", "collectData");
+      this.latlon = this.options.latlon;
+      _.bindAll(this, "render", "addAllEvents", "addOneEvent", "showNextDay", "collectData", "handleMapDrag");
       this.collectData();
     },
     mapDiplayed: false,
@@ -48,7 +50,10 @@ $(function() {
           mod.clear();
         });
       }  
-      this.collection = new lr.Events([], { date : this.date });
+      this.collection = new lr.Events([], { 
+        date : this.date, 
+        latlon: this.latlon
+      });
       this.collection.fetch({
         success:  function(resp) {
           that.render();
@@ -82,6 +87,11 @@ $(function() {
         parentView: this
       });
     },
+    handleMapDrag: function() {
+      var center = this.map.getCenter();
+      this.latlon = { lat: center.Qa, lon: center.Ra };
+      this.collectData();
+    }, 
     renderMap: function() {
       this.mapOptions = {
         center: new google.maps.LatLng(40.726966, -73.99),
@@ -89,6 +99,7 @@ $(function() {
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       this.map = new google.maps.Map($('#map')[0], this.mapOptions);
+      google.maps.event.addListener(this.map, 'dragend', this.handleMapDrag);
       this.mapDisplayed = true;      
     },    
     render: function() {
@@ -138,7 +149,9 @@ $(function() {
     }
   });
 
-  lr.ev = new lr.MapView(
-    { date: Date.parse('today') }
-  );
+  lr.ev = new lr.MapView({
+    date: Date.parse('today'),    
+    latlon: { lat: 40.727, lon: -73.99 }
+  });
 });
+
