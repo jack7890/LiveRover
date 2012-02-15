@@ -36,12 +36,18 @@ $(function() {
       _.bindAll(this, "render", "addAllEvents", "addOneEvent", "showNextDay", "collectData");
       this.collectData();
     },
+    mapDiplayed: false,
     events: {
       "click #next": "showNextDay",
       "click #prev.active": "showPrevDay"      
     },
     collectData: function() {
       var that = this;
+      if (this.collection) {
+        _.each(this.collection.models, function(mod) {
+          mod.clear();
+        });
+      }  
       this.collection = new lr.Events([], { date : this.date });
       this.collection.fetch({
         success:  function(resp) {
@@ -75,14 +81,18 @@ $(function() {
         model:  e,
         parentView: this
       });
-    },    
-    render: function() {
+    },
+    renderMap: function() {
       this.mapOptions = {
         center: new google.maps.LatLng(40.726966, -73.99),
         zoom: 14,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       this.map = new google.maps.Map($('#map')[0], this.mapOptions);
+      this.mapDisplayed = true;      
+    },    
+    render: function() {
+      if(!(this.mapDisplayed)) this.renderMap();
       $('#date-value').html(this.date.toString("dddd, MMMM d"));
       $('#date').fadeIn('fast');
     } 
@@ -92,9 +102,9 @@ $(function() {
   lr.EventView = Backbone.View.extend({
     initialize: function() {
       var that = this;
-      _.bindAll(this, "render", "bindInfoWindow","infoWindowContent");
-      this.bind('change', function() {
-        that.remove();
+      _.bindAll(this, "render", "bindInfoWindow","infoWindowContent", "deleteMarker");
+      this.model.bind('change', function() {
+        that.deleteMarker();
       });
       this.latLon = new google.maps.LatLng(this.model.attributes.venue.location.lat,this.model.attributes.venue.location.lon);
       this.marker = new google.maps.Marker({
@@ -104,13 +114,16 @@ $(function() {
       });
       this.bindInfoWindow();
     },
+    deleteMarker: function() {
+      this.marker.setMap(null);
+    },
     infoWindowContent: function() {
       var that = this, 
           content = _.template($('#info-window').html(),{
             title:      that.model.attributes.short_title,
             link:       that.model.attributes.url,
             venue:      that.model.attributes.venue.name,
-            time:       Date.parse(that.model.attributes.datetime_local).toString("ddd, MMM d @ h:mmt")
+            time:       Date.parse(that.model.attributes.datetime_local).toString("ddd, MMM d @ h:mmtt")
           });
       return content;
     },      
@@ -124,7 +137,6 @@ $(function() {
       });
     }
   });
-
 
   lr.ev = new lr.MapView(
     { date: Date.parse('today') }
