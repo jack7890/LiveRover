@@ -33,8 +33,9 @@ $(function() {
   lr.MapView = Backbone.View.extend({
     el: $('#wrapper'),
     initialize: function() {
-      this.date = this.options.date;
+      this.date   = this.options.date;
       this.latlon = this.options.latlon;
+      this.zoom   = this.options.zoom;
       _.bindAll(this, "render", "addAllEvents", "addOneEvent", "showNextDay", "collectData", "handleMapDrag");
       this.collectData();
     },
@@ -67,7 +68,7 @@ $(function() {
       this.collectData();
     },
     showPrevDay: function() {
-      this.date = this.date.add(-1).days();
+      this.date = this.date.add(-1).days();      
       this.collectData();
       this.setArrowClass();
     },    
@@ -90,12 +91,12 @@ $(function() {
     handleMapDrag: function() {
       var center = this.map.getCenter();
       this.latlon = { lat: center.Qa, lon: center.Ra };
-      this.collectData();
+      this.collectData();    
     }, 
     renderMap: function() {
       this.mapOptions = {
-        center: new google.maps.LatLng(40.726966, -73.99),
-        zoom: 14,
+        center: new google.maps.LatLng(this.latlon.lat, this.latlon.lon),
+        zoom: this.zoom,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       this.map = new google.maps.Map($('#map')[0], this.mapOptions);
@@ -151,7 +152,7 @@ $(function() {
 
   lr.ev = new lr.MapView({
     date: Date.parse('today'),    
-    latlon: { lat: 40.727, lon: -73.99 }
+    latlon: { lat: 40.727, lon: -73.99 },
+    zoom: 14
   });
 });
-
