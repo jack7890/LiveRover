@@ -47,7 +47,7 @@ $(function() {
       this.date   = this.collection.date;
       this.latlon = this.collection.latlon;
       this.zoom   = this.options.zoom;
-      _.bindAll(this, "render", "addAllEvents", "addOneEvent", "changeDay", "handleMapDrag");
+      _.bindAll(this, "render", "addAllEvents", "addOneEvent", "changeDay", "handleMapChange");
       this.collection.bind("add", function(model) {
         that.addOneEvent(model);
       });
@@ -107,7 +107,7 @@ $(function() {
       var center = this.map.getCenter();
       return google.maps.geometry.spherical.computeDistanceBetween(sw, center, 3963.19); // Third param forces response units to be in miles
     },
-    handleMapDrag: function() {
+    handleMapChange: function() {
       var that = this;
       var center = this.map.getCenter();
       this.radius = this.getRadius();
@@ -125,7 +125,7 @@ $(function() {
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       this.map = new google.maps.Map($('#map')[0], this.mapOptions);
-      google.maps.event.addListener(this.map, 'dragend', this.handleMapDrag);
+      google.maps.event.addListener(this.map, 'bounds_changed', this.handleMapChange);
     }    
   });
   
