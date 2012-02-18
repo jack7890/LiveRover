@@ -8,6 +8,10 @@
 .icon {
   font-family: icons;
 }
+body, html {
+  width: 100%;
+  height: 100%;  
+}
 #wrapper {
   position: relative;
   height: 100%;
@@ -39,6 +43,9 @@
 #map {
   position: absolute;
   top: 45px;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 #map img { max-width: none; }
 #header #logo {
