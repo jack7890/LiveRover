@@ -16,11 +16,12 @@ $(function() {
   lr.Events = Backbone.Collection.extend({
     model: lr.Event,
     initialize: function(models, options) {
-      this.date = options.date;
+      this.date   = options.date;
       this.latlon = options.latlon;
+      this.radius = options.radius;
     },
     url: function() {
-      return '/events' + '?date=' + this.date.toString('yyyy-MM-dd') + '&lat=' + this.latlon.lat + '&lon=' + this.latlon.lon;
+      return '/events' + '?date=' + this.date.toString('yyyy-MM-dd') + '&lat=' + this.latlon.lat + '&lon=' + this.latlon.lon + '&radius=' + this.radius;
     },
     parse: function(resp) {
       // Temporarily removing venues "located" at the center of NYC, since those are bogus
@@ -28,7 +29,7 @@ $(function() {
         return ( ev.venue.location.lat == badLoc.lat && ev.venue.location.lon == badLoc.lon) 
       });
     },
-    add: function(models, options) {
+    add: function(models, options) { // Custom add method so that it doesn't try to add duplicate models to collection
       var newModels = [];
       _.each(models, function(model) {
         if (_.isUndefined(this.get(model.id))) {
@@ -48,12 +49,10 @@ $(function() {
       this.zoom   = this.options.zoom;
       _.bindAll(this, "render", "addAllEvents", "addOneEvent", "changeDay", "handleMapDrag");
       this.collection.bind("add", function(model) {
-        console.log('Added a model to the collection.');
         that.addOneEvent(model);
       });
       this.render();
     },
-    mapDiplayed: false,
     events: {
       "click #next": "showNextDay",
       "click #prev.active": "showPrevDay"      
@@ -103,19 +102,23 @@ $(function() {
         parentView: this
       });
     },
+    getRadius: function() {
+      var sw = this.map.getBounds().getSouthWest();
+      var center = this.map.getCenter();
+      return google.maps.geometry.spherical.computeDistanceBetween(sw, center, 3963.19); // Third param forces response units to be in miles
+    },
     handleMapDrag: function() {
       var that = this;
       var center = this.map.getCenter();
+      this.radius = this.getRadius();
       this.latlon = { lat: center.Qa, lon: center.Ra };
       this.collection.latlon = this.latlon;
+      this.collection.radius = this.radius;
       this.collection.fetch({
-        add: true,
-        success: function() {
-          that.collection.toJSON();
-        }
+        add: true
       });    
     }, 
-    renderMap: function() {
+    render: function() {
       this.mapOptions = {
         center: new google.maps.LatLng(this.latlon.lat, this.latlon.lon),
         zoom: this.zoom,
@@ -123,12 +126,7 @@ $(function() {
       };
       this.map = new google.maps.Map($('#map')[0], this.mapOptions);
       google.maps.event.addListener(this.map, 'dragend', this.handleMapDrag);
-      this.mapDisplayed = true;      
-    },    
-    render: function() {
-      if(!(this.mapDisplayed)) this.renderMap();
-      this.renderDateLabel();
-    } 
+    }    
   });
   
   lr.EventView = Backbone.View.extend({
@@ -169,7 +167,8 @@ $(function() {
 
   lr.myEvents = new lr.Events([], {
     date: Date.parse('today'),    
-    latlon: { lat: 40.727, lon: -73.99 }    
+    latlon: { lat: 40.727, lon: -73.99 },
+    radius: 4
   });
 
   lr.primaryView = new lr.MapView({
