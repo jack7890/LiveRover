@@ -11,7 +11,7 @@ $(function() {
   };
   
 
-  lr.Event = Backbone.Model.extend({});
+  lr.Event = Backbone.Model.extend({ });
 
   lr.Events = Backbone.Collection.extend({
     model: lr.Event,
@@ -27,50 +27,65 @@ $(function() {
       return _.reject(resp.events, function(ev) { 
         return ( ev.venue.location.lat == badLoc.lat && ev.venue.location.lon == badLoc.lon) 
       });
-    }
+    },
+    add: function(models, options) {
+      var newModels = [];
+      _.each(models, function(model) {
+        if (_.isUndefined(this.get(model.id))) {
+          newModels.push(model);    
+        }
+      }, this);
+      return Backbone.Collection.prototype.add.call(this, newModels, options);
+    }    
   });
 
   lr.MapView = Backbone.View.extend({
     el: $('#wrapper'),
     initialize: function() {
-      this.date   = this.options.date;
-      this.latlon = this.options.latlon;
+      var that = this;
+      this.date   = this.collection.date;
+      this.latlon = this.collection.latlon;
       this.zoom   = this.options.zoom;
-      _.bindAll(this, "render", "addAllEvents", "addOneEvent", "showNextDay", "collectData", "handleMapDrag");
-      this.collectData();
+      _.bindAll(this, "render", "addAllEvents", "addOneEvent", "changeDay", "handleMapDrag");
+      this.collection.bind("add", function(model) {
+        console.log('Added a model to the collection.');
+        that.addOneEvent(model);
+      });
+      this.render();
     },
     mapDiplayed: false,
     events: {
       "click #next": "showNextDay",
       "click #prev.active": "showPrevDay"      
     },
-    collectData: function() {
-      var that = this;
-      if (this.collection) {
-        _.each(this.collection.models, function(mod) {
-          mod.clear();
-        });
-      }  
-      this.collection = new lr.Events([], { 
-        date : this.date, 
-        latlon: this.latlon
+    changeDay: function(diff) {
+      this.date = this.date.add(diff).days();
+      this.setArrowClass();
+      this.collection.date = this.date;
+            
+      // The following three lines shouldn't be necessary.  Should just be able to
+      // bind a 'remove' event to the lr.EventView model and remove the markers with
+      // that. But this isn't working.  Need to figure out why.
+      _.each(this.collection.models, function(mod) {
+        mod.clear();
       });
+      
+      this.renderDateLabel();
       this.collection.fetch({
-        success:  function(resp) {
-          that.render();
-          that.addAllEvents();
+        success: function() {
+          lr.primaryView.addAllEvents();
         }
-      });      
+      });
+    },
+    renderDateLabel: function() {
+      $('#date-value').html(this.date.toString("dddd, MMMM d"));
+      $('#date').fadeIn('fast');      
     },
     showNextDay: function() {
-      this.date = this.date.add(1).days();
-      this.setArrowClass();
-      this.collectData();
-    },
+      this.changeDay(1);
+    },    
     showPrevDay: function() {
-      this.date = this.date.add(-1).days();      
-      this.collectData();
-      this.setArrowClass();
+      this.changeDay(-1);
     },    
     setArrowClass: function() {
       if(this.date.equals(Date.today())) {
@@ -89,9 +104,16 @@ $(function() {
       });
     },
     handleMapDrag: function() {
+      var that = this;
       var center = this.map.getCenter();
       this.latlon = { lat: center.Qa, lon: center.Ra };
-      this.collectData();    
+      this.collection.latlon = this.latlon;
+      this.collection.fetch({
+        add: true,
+        success: function() {
+          that.collection.toJSON();
+        }
+      });    
     }, 
     renderMap: function() {
       this.mapOptions = {
@@ -105,19 +127,14 @@ $(function() {
     },    
     render: function() {
       if(!(this.mapDisplayed)) this.renderMap();
-      $('#date-value').html(this.date.toString("dddd, MMMM d"));
-      $('#date').fadeIn('fast');
+      this.renderDateLabel();
     } 
   });
   
-  
   lr.EventView = Backbone.View.extend({
     initialize: function() {
-      var that = this;
       _.bindAll(this, "render", "bindInfoWindow","infoWindowContent", "deleteMarker");
-      this.model.bind('change', function() {
-        that.deleteMarker();
-      });
+      this.model.bind('change', this.deleteMarker);
       this.latLon = new google.maps.LatLng(this.model.attributes.venue.location.lat,this.model.attributes.venue.location.lon);
       this.marker = new google.maps.Marker({
          position:  this.latLon,
@@ -150,9 +167,19 @@ $(function() {
     }
   });
 
-  lr.ev = new lr.MapView({
+  lr.myEvents = new lr.Events([], {
     date: Date.parse('today'),    
-    latlon: { lat: 40.727, lon: -73.99 },
+    latlon: { lat: 40.727, lon: -73.99 }    
+  });
+
+  lr.primaryView = new lr.MapView({
+    collection: lr.myEvents,
     zoom: 14
+  });
+  
+  lr.myEvents.fetch({
+    success: function() {
+      lr.primaryView.addAllEvents();
+    }
   });
 });
