@@ -125,6 +125,7 @@ $(function() {
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       this.map = new google.maps.Map($('#map')[0], this.mapOptions);
+      this.renderDateLabel();
       google.maps.event.addListener(this.map, 'bounds_changed', this.handleMapChange);
     }    
   });
