@@ -63,6 +63,10 @@ body, html {
   padding: 14px 14px 0 0;
   color: #432400;
 }
+#header #credit a {
+  color: #432400;
+  font-size: 11px;
+}
 #header #credit b {
   font-weight: 700;
   text-transform: uppercase;
@@ -73,7 +77,7 @@ body, html {
   position: absolute;
   top: 8px;
 }
-#header #date #date-value, #header #date a {
+#header #date #date-value, #header #date a, #header #date #date-input {
   position: relative;
   left: -115px;  
 }
@@ -96,6 +100,26 @@ body, html {
   background-image: -ms-linear-gradient(top, rgb(255, 172, 75), rgb(255, 186, 106));
   background-image: linear-gradient(top, rgb(255, 172, 75), rgb(255, 186, 106));
   filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffac4b', EndColorStr='#ffba6a');
+}
+#header #date-input {
+  float: left;
+  width: 189px;
+  text-align: center;
+  border: 1px solid #c06703;
+  border-radius: 4px 4px 4px 4px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.38), 0 1px 2px rgba(0, 0, 0, 0.12) inset;
+  color: #333;
+  font-size: 13px;
+  font-weight: 400;
+  padding: 3px 0;
+  background-color: #f7f7f7;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(247, 247, 247)), to(rgb(255, 255, 255)));
+  background-image: -webkit-linear-gradient(top, rgb(247, 247, 247), rgb(255, 255, 255));
+  background-image: -moz-linear-gradient(top, rgb(247, 247, 247), rgb(255, 255, 255));
+  background-image: -o-linear-gradient(top, rgb(247, 247, 247), rgb(255, 255, 255));
+  background-image: -ms-linear-gradient(top, rgb(247, 247, 247), rgb(255, 255, 255));
+  background-image: linear-gradient(top, rgb(247, 247, 247), rgb(255, 255, 255));
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#f7f7f7', EndColorStr='#ffffff');    
 }
 #header #date a {
   color: #4C2F0C;

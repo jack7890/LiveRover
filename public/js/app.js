@@ -48,15 +48,25 @@ $(function() {
       this.date   = this.collection.date;
       this.latlon = this.collection.latlon;
       this.zoom   = this.options.zoom;
-      _.bindAll(this, "render", "addAllEvents", "addOneEvent", "changeDay", "handleMapChange");
+      _.bindAll(this, "render", "addAllEvents", "addOneEvent", "changeDay", "handleMapChange", "renderDateLabel");
       this.collection.bind("add", function(model) {
         that.addOneEvent(model);
       });
       this.render();
     },
     events: {
-      "click #next": "showNextDay",
-      "click #prev.active": "showPrevDay"      
+      "click #next":        "showNextDay",
+      "click #prev.active": "showPrevDay",
+      "click #date-value":  "captureDate"    
+    },
+    captureDate: function() {
+      var that = this;
+      $('#date-value').hide();
+      $('#date-input').val('').show().focus().blur(function() {
+        that.date = Date.parse($('#date-input').val()) || that.date;
+        that.changeDay();
+        that.renderDateLabel();
+      });
     },
     changeDay: function(diff) {
       var that = this;
@@ -64,7 +74,7 @@ $(function() {
       _.each(this.collection.requests, function(r) {
         r.abort();
       });
-      this.date = this.date.add(diff).days();
+      if(diff) this.date = this.date.add(diff).days();
       this.setArrowClass();
       this.collection.date = this.date;
             
@@ -86,7 +96,8 @@ $(function() {
       );
     },
     renderDateLabel: function() {
-      $('#date-value').html(this.date.toString("dddd, MMMM d"));
+      $('#date-input').hide();
+      $('#date-value').show().html(this.date.toString("dddd, MMMM d"));
       $('#date').fadeIn('fast');      
     },
     showNextDay: function() {
