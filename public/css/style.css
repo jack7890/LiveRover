@@ -116,11 +116,11 @@ body, html {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 h4.event-title {
-  font-size: 15px;
+  font-size: 14px;
 }
 .venue, .time {
   font-size: 12px;
 }
 .venue {
-  padding-top: 4px;
+  padding-top: 3px;
 }
