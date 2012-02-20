@@ -156,6 +156,7 @@ h4.event-title {
 .time, .stats, .venue {
   font-size: 12px;
   color: #535350;
+  margin-top: -1px;
 }
 .venue {
   padding-top: 4px;
