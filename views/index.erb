@@ -44,6 +44,9 @@
     <h4 class="event-title"><a target="_blank" href="{{ link }}">{{ title }}</a></h4>
     <div class="venue">{{ venue }}</div>
     <div class="time">{{ time }}</div>
+    ~ if(count && (low > 0)) { ~
+      <div class="stats">{{ count }} listings starting at ${{ low }}</div>
+    ~ } ~
   </script>
 
   
