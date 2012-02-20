@@ -68,10 +68,14 @@ body, html {
   text-transform: uppercase;
 }
 #header #date {
-  left: 42%;
+  left: 50%;
   display: none;
   position: absolute;
   top: 8px;
+}
+#header #date #date-value, #header #date a {
+  position: relative;
+  left: -115px;  
 }
 #header #date-value {
   float: left;
