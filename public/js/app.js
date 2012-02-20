@@ -16,11 +16,11 @@ $(function() {
   lr.Events = Backbone.Collection.extend({
     model: lr.Event,
     initialize: function(models, options) {
-      this.date   = options.date;
-      this.latlon = options.latlon;
-      this.radius = options.radius;
+      this.date     = options.date;
+      this.latlon   = options.latlon;
+      this.radius   = options.radius;
+      this.requests = [];
     },
-    xhr: null,
     url: function() {
       return '/events' + '?date=' + this.date.toString('yyyy-MM-dd') + '&lat=' + this.latlon.lat + '&lon=' + this.latlon.lon + '&radius=' + this.radius;
     },
@@ -60,7 +60,10 @@ $(function() {
     },
     changeDay: function(diff) {
       var that = this;
-      if(this.xhr) this.xhr.abort(); // Abort any AJAX requests for prev days that haven't responded yet
+      // Abort any AJAX requests for prev days that haven't responded yet
+      _.each(this.collection.requests, function(r) {
+        r.abort();
+      });
       this.date = this.date.add(diff).days();
       this.setArrowClass();
       this.collection.date = this.date;
@@ -73,12 +76,14 @@ $(function() {
       });
       
       this.renderDateLabel();
-      this.xhr = this.collection.fetch({
-        success: function() {
-          lr.primaryView.addAllEvents();
-          that.xhr = null;
-        }
-      });
+      this.collection.requests.push(
+        this.collection.fetch({
+          success: function() {
+            lr.primaryView.addAllEvents();
+            that.collection.requests = []
+          }
+        })
+      );
     },
     renderDateLabel: function() {
       $('#date-value').html(this.date.toString("dddd, MMMM d"));
@@ -118,9 +123,11 @@ $(function() {
       this.latlon = { lat: center.Qa, lon: center.Ra };
       this.collection.latlon = this.latlon;
       this.collection.radius = this.radius;
-      this.collection.fetch({
-        add: true
-      });    
+      this.collection.requests.push(
+        this.collection.fetch({
+          add: true
+        })    
+      );
     }, 
     render: function() {
       this.mapOptions = {
@@ -181,9 +188,11 @@ $(function() {
     zoom: 14
   });
   
-  lr.myEvents.fetch({
-    success: function() {
-      lr.primaryView.addAllEvents();
-    }
-  });
+  lr.myEvents.requests.push(
+    lr.myEvents.fetch({
+      success: function() {
+        lr.primaryView.addAllEvents();
+      }
+    })
+  );
 });
