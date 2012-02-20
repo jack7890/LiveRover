@@ -56,6 +56,12 @@ body, html {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
   font-family: 'Lobster', cursive, arial;
 }
+#header #loader {
+  position: absolute;
+  top: 10px;
+  left: 100px;
+  display: none;
+}
 #header #credit {
   float: right;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.28);

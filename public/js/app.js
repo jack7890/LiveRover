@@ -48,7 +48,7 @@ $(function() {
       this.date   = this.collection.date;
       this.latlon = this.collection.latlon;
       this.zoom   = this.options.zoom;
-      _.bindAll(this, "render", "addAllEvents", "addOneEvent", "changeDay", "handleMapChange", "renderDateLabel");
+      _.bindAll(this, "render", "addAllEvents", "addOneEvent", "changeDay", "handleMapChange", "renderDateLabel", "toggleLoadingImage");
       this.collection.bind("add", function(model) {
         that.addOneEvent(model);
       });
@@ -78,10 +78,12 @@ $(function() {
     },
     changeDay: function(diff) {
       var that = this;
+
       // Abort any AJAX requests for prev days that haven't responded yet
       _.each(this.collection.requests, function(r) {
         r.abort();
       });
+
       if(diff) this.date = this.date.add(diff).days();
       this.setArrowClass();
       this.collection.date = this.date;
@@ -93,12 +95,14 @@ $(function() {
         mod.clear();
       });
       
+      this.startLoadingImage();
       this.renderDateLabel();
       this.collection.requests.push(
         this.collection.fetch({
           success: function() {
             lr.primaryView.addAllEvents();
-            that.collection.requests = []
+            that.collection.requests = [];
+            that.toggleLoadingImage();
           }
         })
       );
@@ -130,12 +134,23 @@ $(function() {
         parentView: this
       });
     },
+    toggleLoadingImage: function() {
+      var ongoing = false;
+      ongoing = _.any(this.collection.requests, function(r) {
+        return typeof r.status === "undefined";
+      });
+      if(!ongoing) $('#loader').fadeOut('fast');
+    },
+    startLoadingImage: function() {
+      $('#loader').fadeIn('fast');
+    },
     getRadius: function() {
       var sw = this.map.getBounds().getSouthWest();
       var center = this.map.getCenter();
       return google.maps.geometry.spherical.computeDistanceBetween(sw, center, 3963.19); // Third param forces response units to be in miles
     },
     handleMapChange: function() {
+      this.startLoadingImage();
       var that = this;
       var center = this.map.getCenter();
       this.radius = this.getRadius();
@@ -144,7 +159,8 @@ $(function() {
       this.collection.radius = this.radius;
       this.collection.requests.push(
         this.collection.fetch({
-          add: true
+          add: true,
+          success: that.toggleLoadingImage
         })    
       );
     }, 
