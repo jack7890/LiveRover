@@ -45,10 +45,9 @@
     <div class="venue">{{ venue }}</div>
     <div class="time">{{ time }}</div>
     ~ if(count && (low > 0)) { ~
-      <div class="stats">{{ count }} listings starting at ${{ low }}</div>
+      <div class="stats"><b>{{ count }}</b> listings starting at <b>${{ low }}</b></div>
     ~ } ~
   </script>
-
   
 </body>
 </html>
