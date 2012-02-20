@@ -57,16 +57,24 @@ $(function() {
     events: {
       "click #next":        "showNextDay",
       "click #prev.active": "showPrevDay",
-      "click #date-value":  "captureDate"    
+      "click #date-value":  "captureDate",
+      "blur  #date-input":  "blurDate",              
     },
     captureDate: function() {
+      console.log('called');
       var that = this;
       $('#date-value').hide();
-      $('#date-input').val('').show().focus().blur(function() {
-        that.date = Date.parse($('#date-input').val()) || that.date;
-        that.changeDay();
-        that.renderDateLabel();
-      });
+      $('#date-input').val('').show().focus();
+    },
+    blurDate: function() {
+      var newDate = Date.parse($('#date-input').val());
+      if(newDate && newDate != this.date) {
+        this.date = newDate;
+        this.changeDay();
+        this.renderDateLabel();
+      } else {
+        this.renderDateLabel();          
+      }      
     },
     changeDay: function(diff) {
       var that = this;

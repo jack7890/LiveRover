@@ -87,19 +87,20 @@ body, html {
   text-align: center;
   border: 1px solid #c06703;
   border-radius: 4px 4px 4px 4px;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.38), 0 1px 2px rgba(0, 0, 0, 0.12) inset;
-  color: #4C2F0C;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.38), 0 1px 2px rgba(0, 0, 0, 0.09) inset;
+  color: #3b250a;
   font-size: 14px;
   font-weight: 700;
   padding: 3px 0;
-  text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.37);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 172, 75)), to(rgb(255, 186, 106)));
-  background-image: -webkit-linear-gradient(top, rgb(255, 172, 75), rgb(255, 186, 106));
-  background-image: -moz-linear-gradient(top, rgb(255, 172, 75), rgb(255, 186, 106));
-  background-image: -o-linear-gradient(top, rgb(255, 172, 75), rgb(255, 186, 106));
-  background-image: -ms-linear-gradient(top, rgb(255, 172, 75), rgb(255, 186, 106));
-  background-image: linear-gradient(top, rgb(255, 172, 75), rgb(255, 186, 106));
-  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffac4b', EndColorStr='#ffba6a');
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  background-color: #ffe0bc;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 224, 188)), to(rgb(255, 238, 219)));
+  background-image: -webkit-linear-gradient(top, rgb(255, 224, 188), rgb(255, 238, 219));
+  background-image: -moz-linear-gradient(top, rgb(255, 224, 188), rgb(255, 238, 219));
+  background-image: -o-linear-gradient(top, rgb(255, 224, 188), rgb(255, 238, 219));
+  background-image: -ms-linear-gradient(top, rgb(255, 224, 188), rgb(255, 238, 219));
+  background-image: linear-gradient(top, rgb(255, 224, 188), rgb(255, 238, 219));
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffe0bc', EndColorStr='#ffeedb');
 }
 #header #date-input {
   float: left;
