@@ -20,6 +20,7 @@ $(function() {
       this.latlon = options.latlon;
       this.radius = options.radius;
     },
+    xhr: null,
     url: function() {
       return '/events' + '?date=' + this.date.toString('yyyy-MM-dd') + '&lat=' + this.latlon.lat + '&lon=' + this.latlon.lon + '&radius=' + this.radius;
     },
@@ -58,6 +59,8 @@ $(function() {
       "click #prev.active": "showPrevDay"      
     },
     changeDay: function(diff) {
+      var that = this;
+      if(this.xhr) this.xhr.abort(); // Abort any AJAX requests for prev days that haven't responded yet
       this.date = this.date.add(diff).days();
       this.setArrowClass();
       this.collection.date = this.date;
@@ -70,9 +73,10 @@ $(function() {
       });
       
       this.renderDateLabel();
-      this.collection.fetch({
+      this.xhr = this.collection.fetch({
         success: function() {
           lr.primaryView.addAllEvents();
+          that.xhr = null;
         }
       });
     },
