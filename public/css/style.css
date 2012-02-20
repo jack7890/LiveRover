@@ -87,20 +87,20 @@ body, html {
   text-align: center;
   border: 1px solid #c06703;
   border-radius: 4px 4px 4px 4px;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.38), 0 1px 2px rgba(0, 0, 0, 0.09) inset;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.38), 0 1px 2px rgba(0, 0, 0, 0.09) inset, 0 0 5px rgba(255, 255, 255, 0.4);
   color: #3b250a;
   font-size: 14px;
   font-weight: 700;
   padding: 3px 0;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
-  background-color: #ffe0bc;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 224, 188)), to(rgb(255, 238, 219)));
-  background-image: -webkit-linear-gradient(top, rgb(255, 224, 188), rgb(255, 238, 219));
-  background-image: -moz-linear-gradient(top, rgb(255, 224, 188), rgb(255, 238, 219));
-  background-image: -o-linear-gradient(top, rgb(255, 224, 188), rgb(255, 238, 219));
-  background-image: -ms-linear-gradient(top, rgb(255, 224, 188), rgb(255, 238, 219));
-  background-image: linear-gradient(top, rgb(255, 224, 188), rgb(255, 238, 219));
-  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffe0bc', EndColorStr='#ffeedb');
+  background-color: #f1eae3;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(241, 234, 227)), to(rgb(251, 249, 247)));
+  background-image: -webkit-linear-gradient(top, rgb(241, 234, 227), rgb(251, 249, 247));
+  background-image: -moz-linear-gradient(top, rgb(241, 234, 227), rgb(251, 249, 247));
+  background-image: -o-linear-gradient(top, rgb(241, 234, 227), rgb(251, 249, 247));
+  background-image: -ms-linear-gradient(top, rgb(241, 234, 227), rgb(251, 249, 247));
+  background-image: linear-gradient(top, rgb(241, 234, 227), rgb(251, 249, 247));
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#f1eae3', EndColorStr='#fbf9f7');
 }
 #header #date-input {
   float: left;
@@ -108,7 +108,7 @@ body, html {
   text-align: center;
   border: 1px solid #c06703;
   border-radius: 4px 4px 4px 4px;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.38), 0 1px 2px rgba(0, 0, 0, 0.12) inset;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.38), 0 1px 2px rgba(0, 0, 0, 0.09) inset, 0 0 5px rgba(255, 255, 255, 0.8);
   color: #333;
   font-size: 13px;
   font-weight: 400;
