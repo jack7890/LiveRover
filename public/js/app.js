@@ -28,10 +28,11 @@ $(function() {
     parse: function(resp) {
       // Temporarily removing venues "located" at the center of NYC, since those are bogus
       return _.reject(resp.events, function(ev) { 
-        return ( ev.venue.location.lat == badLoc.lat && ev.venue.location.lon == badLoc.lon) 
+        return (ev.venue.location.lat == badLoc.lat && ev.venue.location.lon == badLoc.lon) 
       });
     },
-    add: function(models, options) { // Custom add method so that it doesn't try to add duplicate models to collection
+    // Custom add method so that it doesn't try to add duplicate models to collection
+    add: function(models, options) { 
       var newModels = [];
       _.each(models, function(model) {
         if (_.isUndefined(this.get(model.id))) {
@@ -62,8 +63,6 @@ $(function() {
       "blur  #date-input":  "blurDate",              
     },
     captureDate: function() {
-      console.log('called');
-      var that = this;
       $('#date-value').hide();
       $('#date-input').val('').show().focus();
     },
@@ -151,9 +150,9 @@ $(function() {
       return google.maps.geometry.spherical.computeDistanceBetween(sw, center, 3963.19); // Third param forces response units to be in miles
     },
     handleMapChange: function() {
+      var that = this,
+          center = this.map.getCenter();
       this.startLoadingImage();
-      var that = this;
-      var center = this.map.getCenter();
       this.radius = this.getRadius();
       this.latlon = { lat: center.Qa, lon: center.Ra };
       this.collection.latlon = this.latlon;
