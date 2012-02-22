@@ -12,14 +12,13 @@ $(function() {
   };
   
   lr.Settings = {
-    numBuckets: 7,
+    numBuckets: 6,
     markers: [
       { size: { width: 23, height: 29 } },
       { size: { width: 24, height: 31 } },          
       { size: { width: 25, height: 33 } },
       { size: { width: 27, height: 35 } },
       { size: { width: 28, height: 37 } },
-      { size: { width: 30, height: 39 } },
       { size: { width: 32, height: 42 } }
     ]
   }
@@ -258,7 +257,7 @@ $(function() {
       return rgbToHex(red, green, 0);      
     },
     scaleMarker: function() {
-      return (lr.Settings.markers[this.bucket].size.height / lr.Settings.markers[6].size.height) * .95;
+      return (lr.Settings.markers[this.bucket].size.height / lr.Settings.markers[lr.Settings.numBuckets - 1].size.height) * .95;
     }
   });
 
