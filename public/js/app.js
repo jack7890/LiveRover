@@ -11,6 +11,9 @@ $(function() {
     evaluate : /~(.+?)~/g
   };
   
+  lr.Settings = {
+    numBuckets: 10
+  }
 
   lr.Event = Backbone.Model.extend({ });
 
@@ -88,9 +91,6 @@ $(function() {
       this.setArrowClass();
       this.collection.date = this.date;
             
-      // The following three lines shouldn't be necessary.  Should just be able to
-      // bind a 'remove' event to the lr.EventView model and remove the markers with
-      // that. But this isn't working.  Need to figure out why.
       _.each(this.collection.models, function(mod) {
         mod.clear();
       });
@@ -184,11 +184,27 @@ $(function() {
   lr.EventView = Backbone.View.extend({
     initialize: function() {
       _.bindAll(this, "deleteMarker");
+      this.bucket = this.bucket();
+      this.pinColor = this.getColor();
+      this.markerScale = this.scaleMarker();
       this.model.bind('change', this.deleteMarker);
       this.latLon = new google.maps.LatLng(this.model.attributes.venue.location.lat,this.model.attributes.venue.location.lon);
+      console.log(this.pinColor);
+      this.pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + this.pinColor,
+          null,
+          new google.maps.Point(0,0),
+          new google.maps.Point(10 * this.markerScale, 34 * this.markerScale),
+          new google.maps.Size(21 * this.markerScale, 34 * this.markerScale));
+      this.pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+          null,
+          new google.maps.Point(0, 0),
+          new google.maps.Point(12 * this.markerScale, 35 * this.markerScale),
+          new google.maps.Size(40 * this.markerScale, 37 * this.markerScale));      
       this.marker = new google.maps.Marker({
          position:  this.latLon,
          map:       this.options.parentView.map,
+         icon:      this.pinImage,
+         shadow:    this.pinShadow,
          title:     this.model.attributes.short_title
       });
       this.bindInfoWindow();
@@ -216,6 +232,25 @@ $(function() {
       google.maps.event.addListener(this.marker, 'click', function() {
         infowindow.open(that.options.parentView.map,that.marker);
       });
+    },
+    bucket: function() {
+      var numListings = this.model.attributes.stats.listing_count;
+      if (numListings === 0) return 0;
+      var logListings = Math.log(numListings),
+          i = 0;
+      while(i < 10) {
+        if(logListings < ((i + 1) * 0.7)) return i
+        i++;
+      }    
+      return 10;
+    },
+    getColor: function() {
+      var green = (this.bucket >= lr.Settings.numBuckets / 2 ? 255 : Math.round(255 / ((lr.Settings.numBuckets - 1) / 2)*this.bucket)),
+          red   = ((this.bucket-1) <= lr.Settings.numBuckets / 2 ? 255 : Math.round(255 / ((lr.Settings.numBuckets - 1)/ 2)*(lr.Settings.numBuckets - this.bucket - 1)));
+      return rgbToHex(red, green, 0);      
+    },
+    scaleMarker: function() {
+      return (((this.bucket - (lr.Settings.numBuckets / 2)) / 20) + 1) * 0.94; 
     }
   });
 
@@ -238,3 +273,12 @@ $(function() {
     })
   );
 });
+
+function rgbToHex(r, g, b) {
+    return componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
