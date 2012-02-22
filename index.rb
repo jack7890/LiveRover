@@ -3,6 +3,8 @@ require 'sinatra'
 require 'rest_client'
 require 'rest-client'
 
+set :protection, :except => :frame_options
+
 get '/' do
   erb :index
 end
