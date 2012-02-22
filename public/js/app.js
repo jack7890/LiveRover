@@ -203,7 +203,7 @@ $(function() {
             link:       that.model.attributes.url,
             venue:      that.model.attributes.venue.name,
             low:        that.model.attributes.stats.lowest_price,
-            count:        that.model.attributes.stats.listing_count,            
+            count:      that.model.attributes.stats.listing_count,            
             time:       Date.parse(that.model.attributes.datetime_local).toString("ddd, MMM d @ h:mmtt")
           });
       return content;
