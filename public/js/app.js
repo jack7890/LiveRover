@@ -44,30 +44,30 @@ $(function() {
   });
 
   lr.MapView = Backbone.View.extend({
-    el: $('#wrapper'),
+    el: $('.wrapper'),
     initialize: function() {
       var that = this;
       this.date   = this.collection.date;
       this.latlon = this.collection.latlon;
       this.zoom   = this.options.zoom;
-      _.bindAll(this, "render", "addAllEvents", "addOneEvent", "changeDay", "handleMapChange", "renderDateLabel", "toggleLoadingImage");
+      _.bindAll(this, "handleMapChange");
       this.collection.bind("add", function(model) {
         that.addOneEvent(model);
       });
       this.render();
     },
     events: {
-      "click #next":        "showNextDay",
-      "click #prev.active": "showPrevDay",
-      "click #date-value":  "captureDate",
-      "blur  #date-input":  "blurDate",              
+      "click .next":        "showNextDay",
+      "click .prev.active": "showPrevDay",
+      "click .date-value":  "captureDate",
+      "blur  .date-input":  "blurDate",              
     },
     captureDate: function() {
-      $('#date-value').hide();
-      $('#date-input').val('').show().focus();
+      this.$('.date-value').hide();
+      this.$('.date-input').val('').show().focus();
     },
     blurDate: function() {
-      var newDate = Date.parse($('#date-input').val());
+      var newDate = Date.parse(this.$('.date-input').val());
       if(newDate && newDate != this.date) {
         this.date = newDate;
         this.changeDay();
@@ -100,7 +100,7 @@ $(function() {
       this.collection.requests.push(
         this.collection.fetch({
           success: function() {
-            lr.primaryView.addAllEvents();
+            that.addAllEvents();
             that.collection.requests = [];
             that.toggleLoadingImage();
           }
@@ -108,9 +108,9 @@ $(function() {
       );
     },
     renderDateLabel: function() {
-      $('#date-input').hide();
-      $('#date-value').show().html(this.date.toString("dddd, MMMM d"));
-      $('#date').fadeIn('fast');      
+      this.$('.date-input').hide();
+      this.$('.date-value').show().html(this.date.toString("dddd, MMMM d"));
+      this.$('.date').fadeIn('fast');      
     },
     showNextDay: function() {
       this.changeDay(1);
@@ -120,13 +120,16 @@ $(function() {
     },    
     setArrowClass: function() {
       if(this.date.equals(Date.today())) {
-        $('#prev').removeClass('active').addClass('disabled');      
+        this.$('.prev').removeClass('active').addClass('disabled');      
       } else {
-        $('#prev').removeClass('disabled').addClass('active');
+        this.$('.prev').removeClass('disabled').addClass('active');
       }  
     },    
     addAllEvents: function() {
-      this.collection.each(this.addOneEvent);
+      var that = this;
+      this.collection.each(function(mod) {
+        that.addOneEvent(mod);
+      });
     },
     addOneEvent: function(e) {
       var ev = new lr.EventView({ 
@@ -139,10 +142,10 @@ $(function() {
       ongoing = _.any(this.collection.requests, function(r) {
         return typeof r.status === "undefined";
       });
-      if(!ongoing) $('#loader').fadeOut('fast');
+      if(!ongoing) this.$('.loader').fadeOut('fast');
     },
     startLoadingImage: function() {
-      $('#loader').fadeIn('fast');
+      this.$('.loader').fadeIn('fast');
     },
     getRadius: function() {
       var sw = this.map.getBounds().getSouthWest();
@@ -160,7 +163,9 @@ $(function() {
       this.collection.requests.push(
         this.collection.fetch({
           add: true,
-          success: that.toggleLoadingImage
+          success: function() {
+            that.toggleLoadingImage();
+          }
         })    
       );
     }, 
@@ -178,7 +183,7 @@ $(function() {
   
   lr.EventView = Backbone.View.extend({
     initialize: function() {
-      _.bindAll(this, "render", "bindInfoWindow","infoWindowContent", "deleteMarker");
+      _.bindAll(this, "deleteMarker");
       this.model.bind('change', this.deleteMarker);
       this.latLon = new google.maps.LatLng(this.model.attributes.venue.location.lat,this.model.attributes.venue.location.lon);
       this.marker = new google.maps.Marker({

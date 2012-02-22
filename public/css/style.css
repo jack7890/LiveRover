@@ -12,14 +12,14 @@ body, html {
   width: 100%;
   height: 100%;  
 }
-#wrapper {
+.wrapper {
   position: relative;
   height: 100%;
   width: 100%;
   font-family: 'Open Sans', sans-serif;
   color: #565653;
 }
-#wrapper a {
+.wrapper a {
   color: #006acd;
 }
 #header {
@@ -56,7 +56,7 @@ body, html {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
   font-family: 'Lobster', cursive, arial;
 }
-#header #loader {
+#header .loader {
   position: absolute;
   top: 10px;
   left: 100px;
@@ -77,17 +77,17 @@ body, html {
   font-weight: 700;
   text-transform: uppercase;
 }
-#header #date {
+#header .date {
   left: 50%;
   display: none;
   position: absolute;
   top: 8px;
 }
-#header #date #date-value, #header #date a, #header #date #date-input {
+#header .date .date-value, #header .date a, #header .date .date-input {
   position: relative;
   left: -115px;  
 }
-#header #date-value {
+#header .date-value {
   float: left;
   width: 189px;
   text-align: center;
@@ -108,7 +108,7 @@ body, html {
   background-image: linear-gradient(top, rgb(241, 234, 227), rgb(251, 249, 247));
   filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#f1eae3', EndColorStr='#fbf9f7');
 }
-#header #date-input {
+#header .date-input {
   float: left;
   width: 189px;
   text-align: center;
@@ -128,7 +128,7 @@ body, html {
   background-image: linear-gradient(top, rgb(247, 247, 247), rgb(255, 255, 255));
   filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#f7f7f7', EndColorStr='#ffffff');    
 }
-#header #date a {
+#header .date a {
   color: #4C2F0C;
   float: left;
   margin: 5px 3px 0 3px;
@@ -136,17 +136,17 @@ body, html {
   border: none;
   outline: none;
 }
-#header #date a.disabled, #header #date a.disabled:hover, #header #date a.disabled:active {
+#header .date a.disabled, #header .date a.disabled:hover, #header .date a.disabled:active {
   color: #D26F19;
   cursor: default;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
 }  
-#header #date a:hover {
+#header .date a:hover {
   text-decoration: none;
   color: #59370f;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 5px rgba(255,255,255,.35);
 }
-#header #date a:active {
+#header .date a:active {
   color: #321e06;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
 }
