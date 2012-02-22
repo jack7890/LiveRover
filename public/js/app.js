@@ -118,10 +118,12 @@ $(function() {
       this.$('.date-value').show().html(this.date.toString("dddd, MMMM d"));
       this.$('.date').fadeIn('fast');      
     },
-    showNextDay: function() {
+    showNextDay: function(e) {
+      e.preventDefault();
       this.changeDay(1);
     },    
-    showPrevDay: function() {
+    showPrevDay: function(e) {
+      e.preventDefault();
       this.changeDay(-1);
     },    
     setArrowClass: function() {
