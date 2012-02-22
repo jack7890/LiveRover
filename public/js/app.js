@@ -12,7 +12,16 @@ $(function() {
   };
   
   lr.Settings = {
-    numBuckets: 10
+    numBuckets: 7,
+    markers: [
+      { size: { width: 23, height: 29 } },
+      { size: { width: 24, height: 31 } },          
+      { size: { width: 25, height: 33 } },
+      { size: { width: 27, height: 35 } },
+      { size: { width: 28, height: 37 } },
+      { size: { width: 30, height: 39 } },
+      { size: { width: 32, height: 42 } }
+    ]
   }
 
   lr.Event = Backbone.Model.extend({ });
@@ -188,18 +197,17 @@ $(function() {
       this.pinColor = this.getColor();
       this.markerScale = this.scaleMarker();
       this.model.bind('change', this.deleteMarker);
+      console.log(this.bucket + ': ' + this.pinColor);
       this.latLon = new google.maps.LatLng(this.model.attributes.venue.location.lat,this.model.attributes.venue.location.lon);
-      console.log(this.pinColor);
-      this.pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + this.pinColor,
-          null,
-          new google.maps.Point(0,0),
-          new google.maps.Point(10 * this.markerScale, 34 * this.markerScale),
-          new google.maps.Size(21 * this.markerScale, 34 * this.markerScale));
-      this.pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
-          null,
+      this.pinImage = new google.maps.MarkerImage("/img/markers/marker_" + this.bucket + ".png",
+          new google.maps.Size(lr.Settings.markers[this.bucket].size.width, lr.Settings.markers[this.bucket].size.height),
           new google.maps.Point(0, 0),
-          new google.maps.Point(12 * this.markerScale, 35 * this.markerScale),
-          new google.maps.Size(40 * this.markerScale, 37 * this.markerScale));      
+          null)
+      this.pinShadow = new google.maps.MarkerImage("img/markers/shadow.png",
+          new google.maps.Size(56, 47),
+          new google.maps.Point(0, 0),
+          new google.maps.Point(16 * this.markerScale, 45 * this.markerScale),
+          new google.maps.Size(56 * this.markerScale, 47 * this.markerScale));      
       this.marker = new google.maps.Marker({
          position:  this.latLon,
          map:       this.options.parentView.map,
@@ -238,11 +246,11 @@ $(function() {
       if (numListings === 0) return 0;
       var logListings = Math.log(numListings),
           i = 0;
-      while(i < 10) {
-        if(logListings < ((i + 1) * 0.7)) return i
+      while(i < (lr.Settings.numBuckets - 1)) {
+        if(logListings < ((i + 1) * 1)) return i
         i++;
       }    
-      return 10;
+      return (lr.Settings.numBuckets -1);
     },
     getColor: function() {
       var green = (this.bucket >= lr.Settings.numBuckets / 2 ? 255 : Math.round(255 / ((lr.Settings.numBuckets - 1) / 2)*this.bucket)),
@@ -250,7 +258,7 @@ $(function() {
       return rgbToHex(red, green, 0);      
     },
     scaleMarker: function() {
-      return (((this.bucket - (lr.Settings.numBuckets / 2)) / 20) + 1) * 0.94; 
+      return (lr.Settings.markers[this.bucket].size.height / lr.Settings.markers[6].size.height) * .95;
     }
   });
 
