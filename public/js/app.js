@@ -1,10 +1,5 @@
 $(function() {
-  var lr = lr || {},
-      // Google Maps center of NYC.  Going to filter this out.
-      badLoc = {
-        lat: 40.7144,
-        lon: -74.006
-      }; 
+  var lr = lr || {};      
 
   _.templateSettings = {
     interpolate : /\{\{(.+?)\}\}/g,
@@ -20,7 +15,11 @@ $(function() {
       { size: { width: 27, height: 35 } },
       { size: { width: 28, height: 37 } },
       { size: { width: 32, height: 42 } }
-    ]
+    ],
+    badLoc: {  // Google Maps center of NYC.  Going to filter this out.
+      lat: 40.7144,
+      lon: -74.006
+    }
   }
 
   lr.Event = Backbone.Model.extend({ });
@@ -39,7 +38,7 @@ $(function() {
     parse: function(resp) {
       // Temporarily removing venues "located" at the center of NYC, since those are bogus
       return _.reject(resp.events, function(ev) { 
-        return (ev.venue.location.lat == badLoc.lat && ev.venue.location.lon == badLoc.lon) 
+        return (ev.venue.location.lat == lr.Settings.badLoc.lat && ev.venue.location.lon == lr.Settings.badLoc.lon) 
       });
     },
     // Custom add method so that it doesn't try to add duplicate models to collection
@@ -193,10 +192,8 @@ $(function() {
     initialize: function() {
       _.bindAll(this, "deleteMarker");
       this.bucket = this.bucket();
-      this.pinColor = this.getColor();
-      this.markerScale = this.scaleMarker();
+      this.markerScale = this.scaleShadow();
       this.model.bind('change', this.deleteMarker);
-      console.log(this.bucket + ': ' + this.pinColor);
       this.latLon = new google.maps.LatLng(this.model.attributes.venue.location.lat,this.model.attributes.venue.location.lon);
       this.pinImage = new google.maps.MarkerImage("/img/markers/marker_" + this.bucket + ".png",
           new google.maps.Size(lr.Settings.markers[this.bucket].size.width, lr.Settings.markers[this.bucket].size.height),
@@ -205,7 +202,7 @@ $(function() {
       this.pinShadow = new google.maps.MarkerImage("img/markers/shadow.png",
           new google.maps.Size(56, 47),
           new google.maps.Point(0, 0),
-          new google.maps.Point(16 * this.markerScale, 45 * this.markerScale),
+          new google.maps.Point(16 * this.markerScale, 44 * this.markerScale),
           new google.maps.Size(56 * this.markerScale, 47 * this.markerScale));      
       this.marker = new google.maps.Marker({
          position:  this.latLon,
@@ -246,18 +243,13 @@ $(function() {
       var logListings = Math.log(numListings),
           i = 0;
       while(i < (lr.Settings.numBuckets - 1)) {
-        if(logListings < ((i + 1) * 1)) return i
+        if(logListings < (i + 1)) return i
         i++;
       }    
       return (lr.Settings.numBuckets -1);
     },
-    getColor: function() {
-      var green = (this.bucket >= lr.Settings.numBuckets / 2 ? 255 : Math.round(255 / ((lr.Settings.numBuckets - 1) / 2)*this.bucket)),
-          red   = ((this.bucket-1) <= lr.Settings.numBuckets / 2 ? 255 : Math.round(255 / ((lr.Settings.numBuckets - 1)/ 2)*(lr.Settings.numBuckets - this.bucket - 1)));
-      return rgbToHex(red, green, 0);      
-    },
-    scaleMarker: function() {
-      return (lr.Settings.markers[this.bucket].size.height / lr.Settings.markers[lr.Settings.numBuckets - 1].size.height) * .95;
+    scaleShadow: function() {
+      return (lr.Settings.markers[this.bucket].size.height / lr.Settings.markers[lr.Settings.numBuckets - 1].size.height);
     }
   });
 
@@ -280,12 +272,3 @@ $(function() {
     })
   );
 });
-
-function rgbToHex(r, g, b) {
-    return componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
-
-function componentToHex(c) {
-    var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
-}
