@@ -157,7 +157,7 @@ $(function() {
           center = this.map.getCenter();
       this.startLoadingImage();
       this.radius = this.getRadius();
-      this.latlon = { lat: center.Qa, lon: center.Ra };
+      this.latlon = { lat: center.lat(), lon: center.lng() };
       this.collection.latlon = this.latlon;
       this.collection.radius = this.radius;
       this.collection.requests.push(
@@ -222,7 +222,7 @@ $(function() {
   lr.myEvents = new lr.Events([], {
     date: Date.parse('today'),    
     latlon: { lat: 40.727, lon: -73.99 },
-    radius: 4
+    radius: 8
   });
 
   lr.primaryView = new lr.MapView({
