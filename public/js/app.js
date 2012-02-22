@@ -60,7 +60,6 @@ $(function() {
       this.date   = this.collection.date;
       this.latlon = this.collection.latlon;
       this.zoom   = this.options.zoom;
-      _.bindAll(this, "handleMapChange");
       this.collection.bind("add", function(model) {
         that.addOneEvent(model);
       });
@@ -184,16 +183,15 @@ $(function() {
       };
       this.map = new google.maps.Map($('#map')[0], this.mapOptions);
       this.renderDateLabel();
-      google.maps.event.addListener(this.map, 'bounds_changed', this.handleMapChange);
+      google.maps.event.addListener(this.map, 'bounds_changed', _.bind(this.handleMapChange, this));
     }    
   });
   
   lr.EventView = Backbone.View.extend({
     initialize: function() {
-      _.bindAll(this, "deleteMarker");
       this.bucket = this.bucket();
       this.markerScale = this.scaleShadow();
-      this.model.bind('change', this.deleteMarker);
+      this.model.bind('change', _.bind(this.deleteMarker, this));
       this.latLon = new google.maps.LatLng(this.model.attributes.venue.location.lat,this.model.attributes.venue.location.lon);
       this.pinImage = new google.maps.MarkerImage("/img/markers/marker_" + this.bucket + ".png",
           new google.maps.Size(lr.Settings.markers[this.bucket].size.width, lr.Settings.markers[this.bucket].size.height),
