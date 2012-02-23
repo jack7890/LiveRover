@@ -66,12 +66,16 @@ body, html {
   float: right;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.28);
   font-size: 12px;
-  padding: 14px 14px 0 0;
+  padding: 5px 14px 0 0;
   color: #432400;
 }
 #header #credit a {
-  color: #432400;
-  font-size: 11px;
+  color: #4c2900;
+  font-size: 10px;
+  font-weight: bold;
+  float: right;
+  position: relative;
+  top: -1px;
 }
 #header #credit b {
   font-weight: 700;
