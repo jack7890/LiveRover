@@ -169,3 +169,11 @@ h4.event-title {
   float: left;
   visibility: hidden;
 }
+#legend {
+  position: absolute;
+  bottom: 4px;
+  left: 12px;
+  width: 195px;
+  height: 88px;
+  background-image: url('/img/legend.png');
+}
