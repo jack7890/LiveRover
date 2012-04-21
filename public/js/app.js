@@ -33,7 +33,17 @@ $(function() {
       this.requests = [];
     },
     url: function() {
-      return '/events' + '?date=' + this.date.toString('yyyy-MM-dd') + '&lat=' + this.latlon.lat + '&lon=' + this.latlon.lon + '&radius=' + this.radius;
+      return "/events?" + $.param({
+        "datetime_local.gte": this.date.toString('yyyy-MM-dd'),
+        "datetime_local.lt": this.date.clone().addDays(1).toString('yyyy-MM-dd'),
+        "lat": this.latlon.lat,
+        "lon": this.latlon.lon,
+        // rounded for now to work around a bug in the SG API
+        "range": Math.round(this.radius) + "mi",
+        "format": "json",
+        "per_page": 400,
+        "sort": "score.desc"
+      });
     },
     parse: function(resp) {
       // Temporarily removing venues "located" at the center of NYC, since those are bogus
